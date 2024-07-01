@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Window postMessage Example</title>
+    <style>
+        * {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        code {
+            font-family: monospace;
+            background-color: rgb(87, 87, 87);
+            color: white;
+            padding: 5px;
+            border-radius: 10px;
+        }
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 0;
+            padding: 0 0 20px 0;
+            background-color: rgb(240, 240, 240);
+        }
+
+        #parentToChild {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgb(54, 54, 54);
+            border-radius: 5px;
+            width: 95%;
+            padding: 10px 20px;
+        }
+
+        #childToParent {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid rgb(54, 54, 54);
+            border-radius: 5px;
+            width: 95%;
+            padding: 10px 20px;
+        }
+
+        #messageToBeSent {
+            padding: 10px;
+            border: 1px solid rgb(54, 54, 54);
+            border-radius: 5px;
+            width: 95%;
+        }
+
+        button {
+            display: block;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: rgb(0, 110, 255);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: rgb(0, 90, 255);
+        }
+
+        button:active {
+            background-color: rgb(0, 70, 255);
+        }
+
+        iframe {
+            margin-top: 10px;
+            border: 1px solid rgb(54, 54, 54);
+            border-radius: 5px;
+            width: 100%;
+            height: 100%;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #parentReceivedMessage {
+            margin-top: 10px;
+            padding: 10px;
+            border: 1px solid rgb(54, 54, 54);
+            border-radius: 5px;
+            background-color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <h1><i>From Parent to Child (iframe)</i></h1>
+    <div id="parentToChild">
+        <div style="width: 40%;">
+            <h1>Parent HTML</h1>
+            <h2>This is the parent HTML that encloses the <code>child.html</code> iframe</h2>
+
+            <input id="messageToBeSent" type="text" placeholder="Enter your message to child iframe...">
+            <button id="sendButton">Send Message to Child</button>
+        </div>
+        <div style="width: 10%;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-chevrons-right">
+                <path d="m6 17 5-5-5-5" />
+                <path d="m13 17 5-5-5-5" />
+            </svg>
+        </div>
+        <div style="width: 40%;">
+            <iframe src="child.html" frameborder="1" style="height: 300px;"></iframe>
+        </div>
+    </div>
+    <h1><i>From Child (iframe) to Parent</i></h1>
+    <div id="childToParent">
+        <div style="width: 40%;">
+            <h1>Parent HTML</h1>
+            <h2>This is the parent HTML that encloses the <code>child.html</code> iframe</h2>
+            <div id="parentReceivedMessage">&nbsp;</div>
+        </div>
+        <div style="width: 10%;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                class="lucide lucide-chevrons-left">
+                <path d="m11 17-5-5 5-5" />
+                <path d="m18 17-5-5 5-5" />
+            </svg>
+        </div>
+        <div style="width: 40%;">
+            <iframe src="child2.html" frameborder="0" style="height: 350px;"></iframe>
+        </div>
+    </div>
+    <script>
+        const iframe = document.querySelector('iframe');
+        const messageToBeSent = document.getElementById('messageToBeSent');
+        const sendButton = document.getElementById('sendButton');
+
+        const sendMessageToChild = () => {
+            const message = {
+                message: messageToBeSent.value
+            }
+            iframe.contentWindow.postMessage(message, "*");
+        }
+
+
+        sendButton.addEventListener("click", sendMessageToChild);
+        messageToBeSent.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+                sendMessageToChild();
+            }
+        });
+
+        window.addEventListener("message", (event) => {
+            const messageDiv = document.getElementById("parentReceivedMessage");
+            messageDiv.textContent = event.data.message;
+        })
+    </script>
+</body>
+
+</html>
